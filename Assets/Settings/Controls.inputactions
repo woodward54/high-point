@@ -1,0 +1,24 @@
+{
+    "name": "Controls",
+    "maps": [
+        {
+            "name": "World",
+            "id": "b7380964-4ceb-4885-9c5c-862f80c78dfa",
+            "actions": [],
+            "bindings": []
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Touch",
+            "bindingGroup": "Touch",
+            "devices": [
+                {
+                    "devicePath": "<Touchscreen>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}
