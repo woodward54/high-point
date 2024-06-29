@@ -10,6 +10,7 @@ namespace Pathfinding {
 	using Pathfinding.Util;
 	using Pathfinding.Jobs;
 	using Pathfinding.Graphs.Navmesh.Jobs;
+	using Pathfinding.Drawing;
 
 	/// <summary>
 	/// Automatically generates navmesh graphs based on world geometry.
@@ -21,7 +22,49 @@ namespace Pathfinding {
 	///
 	/// For a tutorial on how to configure a recast graph, take a look at create-recast (view in online documentation for working links).
 	///
+	/// \section recastinspector Inspector
+	///
 	/// [Open online documentation to see images]
+	///
+	/// <b>Shape</b>
+	/// \inspectorField{Dimensions, dimensionMode}
+	/// \inspectorField{Center, forcedBoundsCenter}
+	/// \inspectorField{Size, forcedBoundsSize}
+	/// \inspectorField{Rotation, rotation}
+	/// \inspectorField{Snap bounds to scene, SnapForceBoundsToScene}
+	///
+	/// <b>Input Filtering</b>
+	/// \inspectorField{Filter Objects By, collectionSettings.collectionMode}
+	/// \inspectorField{Layer Mask, collectionSettings.layerMask}
+	/// \inspectorField{Tag Mask, collectionSettings.tagMask}
+	/// \inspectorField{Rasterize Terrains, collectionSettings.rasterizeTerrain}
+	/// \inspectorField{Rasterize Trees, collectionSettings.rasterizeTrees}
+	/// \inspectorField{Heightmap Downsampling, collectionSettings.terrainHeightmapDownsamplingFactor}
+	/// \inspectorField{Rasterize Meshes, collectionSettings.rasterizeMeshes}
+	/// \inspectorField{Rasterize Colliders, collectionSettings.rasterizeColliders}
+	///
+	/// <b>Agent Characteristics</b>
+	/// \inspectorField{Character Radius, characterRadius}
+	/// \inspectorField{Character Height, walkableHeight}
+	/// \inspectorField{Max Step Height, walkableClimb}
+	/// \inspectorField{Max Slope, maxSlope}
+	/// \inspectorField{Per Layer Modifications, perLayerModifications}
+	///
+	/// <b>Rasterization</b>
+	/// \inspectorField{Voxel Size, cellSize}
+	/// \inspectorField{Use Tiles, useTiles}
+	/// \inspectorField{Tile Size, editorTileSize}
+	/// \inspectorField{Max Border Edge Length, maxEdgeLength}
+	/// \inspectorField{Edge Simplification, contourMaxError}
+	/// \inspectorField{Min Region Size, minRegionSize}
+	/// \inspectorField{Round Collider Detail, colliderRasterizeDetail}
+	///
+	/// <b>Runtime Settings</b>
+	/// \inspectorField{Affected By Navmesh Cuts, enableNavmeshCutting}
+	///
+	/// <b>Advanced</b>
+	/// \inspectorField{Relevant Graph Surface Mode, relevantGraphSurfaceMode}
+	/// \inspectorField{Initial Penalty, initialPenalty}
 	///
 	/// \section howitworks How a recast graph works
 	/// When generating a recast graph what happens is that the world is voxelized.
@@ -916,13 +959,10 @@ namespace Pathfinding {
 					graph.StartBatchTileUpdate();
 					for (int z = 0; z < tileRect.Height; z++) {
 						for (int x = 0; x < tileRect.Width; x++) {
-							var tileIndex = (z+tileRect.ymin)*graph.tileXCount + (x + tileRect.xmin);
-							graph.ClearTile(x + tileRect.xmin, z+tileRect.ymin);
-
 							var newTile = tiles[z*tileRect.Width + x];
 							// Assign the new tile
 							newTile.graph = graph;
-							graph.tiles[tileIndex] = newTile;
+							graph.ClearTile(x + tileRect.xmin, z+tileRect.ymin, newTile);
 						}
 					}
 					graph.EndBatchTileUpdate();
@@ -1033,6 +1073,8 @@ namespace Pathfinding {
 			public void Apply (IGraphUpdateContext ctx) {
 				// Destroy all previous nodes, if any exist
 				graph.DestroyAllNodes();
+				graph.hasExtendedInZ = false;
+				graph.hasExtendedInX = false;
 
 				if (emptyGraph) {
 					graph.SetLayout(tileLayout);
@@ -1081,6 +1123,9 @@ namespace Pathfinding {
 			return new RecastMovePromise(this, new Int2(dx, dz));
 		}
 
+		bool hasExtendedInX = false;
+		bool hasExtendedInZ = false;
+
 		class RecastMovePromise : IGraphUpdatePromise {
 			RecastGraph graph;
 			TileMeshes tileMeshes;
@@ -1100,9 +1145,34 @@ namespace Pathfinding {
 				newTileRect = originalTileRect.Offset(delta);
 				var createdTiles = IntRect.Exclude(newTileRect, originalTileRect);
 
+				// Initially, the graph bounding box size may not be a multiple of the tile size.
+				// This can result in the tiles at the +x and +z borders of the graph being slightly cropped.
+				// When we move the graph, we will round it up to the nearest multiple of the tile size.
+				// However, this means we also need to recalculate those border tiles that may have been
+				// cropped before. So the first time we move in the +x and +z directions, we recalculate
+				// an extra row/column of tiles.
+				// Ideally we'd update all border tiles the first time we move in a direction, but that
+				// would require much more complex logic.
+				// If we move in the -x or -z directions, we don't need to calculate any extra tiles,
+				// and the tiles that were cropped originally will be discarded after the move.
+				if (!graph.hasExtendedInX && delta.x != 0) {
+					if (delta.x > 0) createdTiles.xmin -= 1;
+					graph.hasExtendedInX = true;
+				}
+
+				if (!graph.hasExtendedInZ && delta.y != 0) {
+					if (delta.y > 0) createdTiles.ymin -= 1;
+					graph.hasExtendedInZ = true;
+				}
+
 				var disposeArena = new DisposeArena();
 
-				var buildSettings = RecastBuilder.BuildTileMeshes(graph, new TileLayout(graph), createdTiles);
+				var tileLayout = new TileLayout(graph);
+				// Disable cropping to the graph's exact bounds, since the new tiles are actually
+				// created outside the current bounds of the graph.
+				tileLayout.graphSpaceSize.x = float.PositiveInfinity;
+				tileLayout.graphSpaceSize.z = float.PositiveInfinity;
+				var buildSettings = RecastBuilder.BuildTileMeshes(graph, tileLayout, createdTiles);
 				buildSettings.scene = graph.active.gameObject.scene;
 
 				// Schedule the jobs asynchronously.
@@ -1119,7 +1189,7 @@ namespace Pathfinding {
 				pendingPromise.Dispose();
 				disposeArena.DisposeAll();
 				// Set the tile rect of the newly created tiles relative to the #newTileRect
-				tileMeshes.tileRect = createdTiles.Offset(originalTileRect.Min - newTileRect.Min);
+				tileMeshes.tileRect = createdTiles.Offset(-delta);
 			}
 
 			public void Apply (IGraphUpdateContext ctx) {
@@ -1216,7 +1286,7 @@ namespace Pathfinding {
 						NavmeshTile tile = tiles[x + z*tileXCount];
 						newTiles[(x - newTileBounds.xmin) + (z - newTileBounds.ymin)*newTileBounds.Width] = tile;
 					} else {
-						ClearTile(x, z);
+						ClearTile(x, z, null);
 
 						// This tile is removed, and that means some off-mesh links may need to be recalculated
 						DirtyBounds(GetTileBounds(x, z));

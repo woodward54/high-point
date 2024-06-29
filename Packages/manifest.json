@@ -1,16 +1,21 @@
 {
   "dependencies": {
+    "com.eflatun.scenereference": "git+https://github.com/starikcetin/Eflatun.SceneReference.git#4.0.0",
+    "com.niantic.lightship.maps": "https://github.com/niantic-lightship/maps-upm.git",
     "com.nianticlabs.lightship": "https://github.com/niantic-lightship/ardk-upm.git",
+    "com.unity.addressables": "1.21.21",
     "com.unity.burst": "1.8.15",
     "com.unity.collab-proxy": "2.3.1",
     "com.unity.collections": "1.4.0",
-    "com.unity.entities": "1.2.1",
-    "com.unity.entities.graphics": "1.2.1",
+    "com.unity.device-simulator.devices": "1.0.0",
+    "com.unity.entities": "1.2.3",
+    "com.unity.entities.graphics": "1.2.3",
     "com.unity.feature.development": "1.0.1",
     "com.unity.ide.rider": "3.0.28",
     "com.unity.ide.vscode": "1.2.5",
     "com.unity.mathematics": "1.2.6",
     "com.unity.postprocessing": "3.4.0",
+    "com.unity.recorder": "4.0.3",
     "com.unity.render-pipelines.universal": "14.0.11",
     "com.unity.test-framework": "1.1.33",
     "com.unity.textmeshpro": "3.0.9",
@@ -20,6 +25,7 @@
     "com.unity.visualscripting": "1.9.4",
     "com.unity.xr-content.xr-sim-environments": "file:../ContentPackages/com.unity.xr-content.xr-sim-environments-1.0.0.tgz",
     "com.unity.xr.openxr": "1.10.0",
+    "jp.keijiro.klak.motion": "1.1.0",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
@@ -51,5 +57,14 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  }
+  },
+  "scopedRegistries": [
+    {
+      "name": "Keijiro",
+      "url": "https://registry.npmjs.com",
+      "scopes": [
+        "jp.keijiro"
+      ]
+    }
+  ]
 }

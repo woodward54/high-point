@@ -28,10 +28,26 @@ namespace Pathfinding {
 	/// For larger graphs, it can take quite some time to scan the graph with the default settings.
 	/// You can enable <see cref="optimizeForSparseGraph"/> which will in most cases reduce the calculation times drastically.
 	///
-	/// Note: Does not support linecast because of obvious reasons.
+	/// Note: Does not support linecast because the nodes do not have a surface.
 	///
 	/// [Open online documentation to see images]
+	///
+	/// \section pointgraph-inspector Inspector
 	/// [Open online documentation to see images]
+	///
+	/// \inspectorField{Root, root}
+	/// \inspectorField{Recursive, recursive}
+	/// \inspectorField{Tag, searchTag}
+	/// \inspectorField{Max Distance, maxDistance}
+	/// \inspectorField{Max Distance (axis aligned), limits}
+	/// \inspectorField{Raycast, raycast}
+	/// \inspectorField{Raycast → Use 2D Physics, use2DPhysics}
+	/// \inspectorField{Raycast → Thick Raycast, thickRaycast}
+	/// \inspectorField{Raycast → Thick Raycast -> Radius, thickRaycastRadius}
+	/// \inspectorField{Raycast → Mask, mask}
+	/// \inspectorField{Optimize For Sparse Graph, optimizeForSparseGraph}
+	/// \inspectorField{Nearest Node Queries Find Closest, nearestNodeDistanceMode}
+	/// \inspectorField{Initial Penalty, initialPenalty}
 	/// </summary>
 	[JsonOptIn]
 	[Pathfinding.Util.Preserve]

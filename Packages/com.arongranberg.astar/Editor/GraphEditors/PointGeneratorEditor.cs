@@ -12,13 +12,13 @@ namespace Pathfinding {
 		public override void OnInspectorGUI (NavGraph target) {
 			var graph = target as PointGraph;
 
-			graph.root = ObjectField(new GUIContent("Root", "All childs of this object will be used as nodes, if it is not set, a tag search will be used instead (see below)"), graph.root, typeof(Transform), true, false) as Transform;
+			graph.root = ObjectField(new GUIContent("Root", "All children of this object will be used as nodes, if it is not set, a tag search will be used instead (see below)"), graph.root, typeof(Transform), true, false) as Transform;
 
-			graph.recursive = EditorGUILayout.Toggle(new GUIContent("Recursive", "Should childs of the childs in the root GameObject be searched"), graph.recursive);
+			graph.recursive = EditorGUILayout.Toggle(new GUIContent("Recursive", "Should children of the children in the root GameObject be searched"), graph.recursive);
 			graph.searchTag = EditorGUILayout.TagField(new GUIContent("Tag", "If root is not set, all objects with this tag will be used as nodes"), graph.searchTag);
 
 			if (graph.root != null) {
-				EditorGUILayout.HelpBox("All childs "+(graph.recursive ? "and sub-childs " : "") +"of 'root' will be used as nodes\nSet root to null to use a tag search instead", MessageType.None);
+				EditorGUILayout.HelpBox("All children "+(graph.recursive ? "and sub-children " : "") +"of 'root' will be used as nodes\nSet root to null to use a tag search instead", MessageType.None);
 			} else {
 				EditorGUILayout.HelpBox("All object with the tag '"+graph.searchTag+"' will be used as nodes"+(graph.searchTag == "Untagged" ? "\nNote: the tag 'Untagged' cannot be used" : ""), MessageType.None);
 			}
@@ -46,7 +46,7 @@ namespace Pathfinding {
 			}
 
 			graph.optimizeForSparseGraph = EditorGUILayout.Toggle(new GUIContent("Optimize For Sparse Graph", "Check online documentation for more information."), graph.optimizeForSparseGraph);
-			graph.nearestNodeDistanceMode = (PointGraph.NodeDistanceMode)EditorGUILayout.Popup(new GUIContent("Nearest node queries find closest"), (int)graph.nearestNodeDistanceMode, nearestNodeDistanceModeLabels);
+			graph.nearestNodeDistanceMode = (PointGraph.NodeDistanceMode)EditorGUILayout.Popup(new GUIContent("Nearest Node Queries Find Closest"), (int)graph.nearestNodeDistanceMode, nearestNodeDistanceModeLabels);
 
 			if (graph.nearestNodeDistanceMode == PointGraph.NodeDistanceMode.Connection && !graph.optimizeForSparseGraph) {
 				EditorGUILayout.HelpBox("Connection mode can only be used if Optimize For Sparse Graph is enabled", MessageType.Error);

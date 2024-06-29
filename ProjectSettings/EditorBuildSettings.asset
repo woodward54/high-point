@@ -6,8 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/AR Scene.unity
+    path: Assets/_HighPoint/Scenes/Bootstrapper.unity
+    guid: 06028a4eee3a3428e8b294584f3bd0c9
+  - enabled: 1
+    path: Assets/_HighPoint/Scenes/Map.unity
+    guid: 898087f6a171145e5b3ae43bda7c5fc7
+  - enabled: 1
+    path: Assets/_HighPoint/Scenes/Battle.unity
     guid: 6dee5967db1bb46eaa0161ac265c1bf9
+  - enabled: 1
+    path: Assets/_HighPoint/Scenes/MainMenu.unity
+    guid: 8122c2aa7e13d4438b549df0faab985d
   m_configObjects:
     Niantic.Lightship.AR.LightshipSettings: {fileID: 11400000, guid: 8761a52b3ea7d4003b85dcd50e7e2188, type: 2}
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 1c5684369a8fd484a988947efd489987, type: 2}

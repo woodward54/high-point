@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5fc65b86ed024c9480baad8d59d5548, type: 3}
+  m_Name: Outpost Base
+  m_EditorClassIdentifier: 
+  <Buildings>k__BackingField:
+  - Building: {fileID: 11400000, guid: 08e0467cdebe8478aba6551fb34279f5, type: 2}
+    Frequency: 0.056
+    Min: 1
+    Max: 2
+    SpawnOutsideWalls: 1
+  - Building: {fileID: 11400000, guid: 6f5edbbb2a0f94e43b53e5e4d519d663, type: 2}
+    Frequency: 0.103
+    Min: 1
+    Max: 2
+    SpawnOutsideWalls: 0
+  <Wall>k__BackingField: {fileID: 11400000, guid: 48be2ca8707304bd6824afcaff1085c3, type: 2}
